@@ -1,0 +1,296 @@
+"use client";
+import React from 'react'
+import NewsItem from './NewsItem'
+import { useEffect,useState } from 'react';
+
+
+
+
+
+interface NewsArticle {
+  source: {
+    id: string | null;
+    name: string;
+  };
+  author: string | null;
+  title: string;
+  description: string | null;
+  url: string;
+  urlToImage: string | null;
+  publishedAt: string | null;
+  content: string | null;
+}
+const article =
+    [
+    {
+      "source": {
+        "id": null,
+        "name": "Financial Times"
+      },
+      "author": "Daniel Thomas, Christopher Grimes, Lauren Fedor, Anna Nicolaou",
+      "title": "Donald Trump’s lawsuit against Rupert Murdoch ruptures bond that has shaped the US right - Financial Times",
+      "description": "The alliance has been beneficial to both men but has often been fractious",
+      "url": "https://www.ft.com/content/9cbc70f4-bd31-4049-a5b1-9e670a48a5ec",
+      "urlToImage": "https://www.ft.com/__origami/service/image/v2/images/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F79f5bd3b-e6f9-425d-810b-0caa7885e628.jpg?source=next-barrier-page",
+      "publishedAt": "2025-07-19T09:00:05Z",
+      "content": "Complete digital access to quality analysis and expert insights, complemented with our award-winning Weekend Print edition.\r\n\u003Cul\u003E\u003Cli\u003E\u003C/li\u003EEverything in Print\u003Cli\u003E\u003C/li\u003EWeekday Print Edition\u003Cli\u003E\u003C/li\u003EFT … [+202 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Fitandwell.com"
+      },
+      "author": "Maddy Biddulph",
+      "title": "Gut health deteriorates with age—try this expert’s five-step plan to keep your microbiome happy and healthy - Fit&Well",
+      "description": "An unhealthy gut can be a sign of bigger issues, especially as we age",
+      "url": "https://www.fitandwell.com/nutrition/gut-health-deteriorates-with-age-try-this-experts-five-step-plan-to-keep-your-microbiome-happy-and-healthy",
+      "urlToImage": "https://cdn.mos.cms.futurecdn.net/QtMVz6RqDuZ83KEQCb2dz9.jpg",
+      "publishedAt": "2025-07-19T06:06:03Z",
+      "content": "If you’re struggling with low energy, bloating, poor immunity, skin issues or anxiety, then your gut could be trying to tell you something.\r\nAccording to Shona Wilkinson, lead nutritionist at supplem… [+3746 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "New York Post"
+      },
+      "author": "Bryan Fonseca",
+      "title": "Phillie Phanatic hilariously recreates viral Coldplay kiss cam scandal - New York Post",
+      "description": "The Philadelphia Phillies delivered their take on the story that won’t die.",
+      "url": "https://nypost.com/2025/07/19/sports/phillie-phanatic-hilariously-recreates-viral-coldplay-kiss-cam-scandal/",
+      "urlToImage": "https://nypost.com/wp-content/uploads/sites/2/2025/07/Phillie-Phanatic-comp-1.jpg?quality=75&strip=all&w=1024",
+      "publishedAt": "2025-07-19T05:05:00Z",
+      "content": "The Phillies delivered their take on the story that won’t die.\r\nThey recreated the viral Coldplay concert kiss cam moment as part of Friday night’s game against the Angels.\r\nDuring the middle of the … [+1800 chars]"
+    },
+    {
+      "source": {
+        "id": "associated-press",
+        "name": "Associated Press"
+      },
+      "author": null,
+      "title": "Two surrogates speak out about California couple under investigation - AP News",
+      "description": "Authorities are investigating a Southern California couple after their infant child was taken to a hospital with a traumatic head injury and 21 children were discovered in their custody. Many of the children were born by surrogate, and at least eight women ha…",
+      "url": "https://apnews.com/article/california-couple-investigation-kids-surrogates-360635ce8dba2ff31f09506c15aa539a",
+      "urlToImage": "https://dims.apnews.com/dims4/default/1dc64e3/2147483647/strip/true/crop/5280x2970+0+275/resize/1440x810!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F46%2Fe0%2Fcc766dfc14b00d5235a08f08902d%2Fc8ee06289d964effbff7776729971bdb",
+      "publishedAt": "2025-07-19T04:07:00Z",
+      "content": "LOS ANGELES (AP) A woman who almost served as a surrogate for a Southern California couple now under investigation by authorities said she backed out after the couple asked her if any of her friends … [+6656 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Space.com"
+      },
+      "author": "Robert Z. Pearlman",
+      "title": "Friday night light: SpaceX launch from California sends two dozen new Starlink satellites into low Earth orbit - Space",
+      "description": "Liftoff occurred at 11:52 p.m. EDT on Friday (July 18).",
+      "url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-17-3-b1082-vsfb-ocisly",
+      "urlToImage": "https://cdn.mos.cms.futurecdn.net/VVR7vJhHLswQxozQNYwEML.jpg",
+      "publishedAt": "2025-07-19T04:06:46Z",
+      "content": "SpaceX added 24 new Starlink satellites to its orbital network on a Friday night (July 18) launch from California.\r\nThe company's Falcon 9 rocket lifted off at 8:52 p.m. local (11:52 p.m. EDT or 0352… [+1430 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "MMA Fighting"
+      },
+      "author": "Bryan Tucker",
+      "title": "UFC 318 Results: Poirier vs. Holloway 3 - MMA Fighting",
+      "description": "Get UFC 318 results for the Poirier vs. Holloway 3 event Saturday in New Orleans.",
+      "url": "https://www.mmafighting.com/2025/7/19/24469492/ufc-318-results-poirier-vs-holloway-3",
+      "urlToImage": "https://cdn.vox-cdn.com/thumbor/Kwcmjin1R8f5J7h9iu3TDuJzUYs=/0x0:3773x1975/fit-in/1200x630/cdn.vox-cdn.com/uploads/chorus_asset/file/26061023/2225882156.jpg",
+      "publishedAt": "2025-07-19T04:00:00Z",
+      "content": "MMA Fighting has UFC 318 results for the Poirier vs. Holloway 3 fight card, live blogs of the entire main card, and more from Smoothie King Center in New Orleans on Saturday night.\r\nIn the main event… [+1142 chars]"
+    },
+    {
+      "source": {
+        "id": "associated-press",
+        "name": "Associated Press"
+      },
+      "author": null,
+      "title": "Makeup artist is one of the US deportees sent from El Salvador to Venezuela, congressman says - AP News",
+      "description": "Andry Hernández Romero, a makeup artist from Venezuela who was deported to El Salvador by the Trump administration and held in a notorious mega-prison, was among the scores of migrants sent back to Venezuela in a three-nation exchange Friday. California Rep. …",
+      "url": "https://apnews.com/article/venezuela-el-salvador-deportation-makeup-artist-8e61698c8a38f765116a0b62caff4dff",
+      "urlToImage": "https://dims.apnews.com/dims4/default/2f66bba/2147483647/strip/true/crop/5129x2885+0+267/resize/1440x810!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F1e%2F2e%2F9217005bb37703bf4c0b3df41cea%2F8ebecd2fd8c64fb59094ee02863c47af",
+      "publishedAt": "2025-07-19T03:31:00Z",
+      "content": "WASHINGTON (AP) Andry Hernández Romero, a makeup artist from Venezuela who was deported to El Salvador by the Trump administration and held in a notorious mega-prison, was among the scores of migrant… [+1337 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Pitchfork"
+      },
+      "author": "Matthew Strauss",
+      "title": "Tyler, the Creator Teases Don’t Tap the Glass - pitchfork.com",
+      "description": "The musician appears to be gearing up for a big drop on Monday, July 21",
+      "url": "https://pitchfork.com/news/tyler-the-creator-teases-dont-tap-the-glass/",
+      "urlToImage": "https://media.pitchfork.com/photos/687a792181d661e77eea5227/16:9/w_1280,c_limit/Tyler-the-Creator.jpeg",
+      "publishedAt": "2025-07-19T03:20:39Z",
+      "content": "It appears that Tyler, the Creator is gearing up for something big. The musician has beenpostingaboutJuly 21, and, outside his concert tonight at Barclays Center, in Brooklyn, New York, there was a l… [+2858 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "KSL.com"
+      },
+      "author": "Hannah Lang, Reuters",
+      "title": "Trump signs stablecoin law as crypto industry aims for mainstream adoption - KSL News",
+      "description": "President Donald Trump on Friday signed the GENIUS Act to create a regulatory regime for stablecoins, a milestone that could pave the way for the digital assets to become mainstream.",
+      "url": "https://www.ksl.com/article/51348035/trump-signs-stablecoin-law-as-crypto-industry-aims-for-mainstream-adoption",
+      "urlToImage": "https://img.ksl.com/slc/3101/310115/31011551.JPG?filter=kslv2/responsive_story_lg",
+      "publishedAt": "2025-07-19T02:03:55Z",
+      "content": "WASHINGTON President Donald Trump on Friday signed a law to create a regulatory regime for dollar-pegged cryptocurrencies known as stablecoins, a milestone that could pave the way for the digital ass… [+3957 chars]"
+    },
+    {
+      "source": {
+        "id": "abc-news",
+        "name": "ABC News"
+      },
+      "author": "ABC News",
+      "title": "3 LA sheriff's deputies killed in explosion at training facility in department's biggest loss of life since 1857 - ABC News",
+      "description": null,
+      "url": "https://abcnews.go.com/US/3-killed-horrific-incident-law-enforcement-training-facility/story?id\\\\u003d123864988",
+      "urlToImage": null,
+      "publishedAt": "2025-07-19T02:01:24Z",
+      "content": null
+    },
+    {
+      "source": {
+        "id": "associated-press",
+        "name": "Associated Press"
+      },
+      "author": null,
+      "title": "Ionescu wins 3-point contest, Cloud claims skills competition in Liberty All-Star sweep - AP News",
+      "description": "Sabrina Ionescu won the 3-point contest and her New York Liberty teammate Natasha Cloud was the skills champion at All-Star Friday night. Ionescu, who won the title in 2023 with a record performance, had a strong final round, scoring 30 points. It was less th…",
+      "url": "https://apnews.com/article/wnba-all-star-75f5cc35bae99a745efd495457302578",
+      "urlToImage": "https://dims.apnews.com/dims4/default/7a487d0/2147483647/strip/true/crop/3469x1951+0+181/resize/1440x810!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2Fda%2F47%2F7617643439612c1c1e2f3d053833%2F00b328232a214513bc6a86da45a0cb2d",
+      "publishedAt": "2025-07-19T02:00:00Z",
+      "content": "INDIANAPOLIS (AP) Sabrina Ionescu put on another shooting clinic to win the 3-point contest for the second time at All-Star weekend on Friday night.\r\nThe Libertys star guard, who also won the title i… [+4123 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "BBC News"
+      },
+      "author": null,
+      "title": "Syria presidency to send new force to halt clashes in south - BBC",
+      "description": "The Syrian leader's move comes after days of clashes between Bedouin and Druze fighters in Suweida, reported to have killed hundreds.",
+      "url": "https://www.bbc.com/news/articles/c0m87d4p9gvo",
+      "urlToImage": "https://ichef.bbci.co.uk/news/1024/branded_news/e806/live/28c1b080-6457-11f0-8dbd-f3d32ebd3327.jpg",
+      "publishedAt": "2025-07-19T01:50:40Z",
+      "content": "Syrian security forces in Suweida. Photo: 16 July 2025\r\nThe Syrian presidency says it will deploy a new force to halt the deadly sectarian clashes between Bedouin and Druze fighters in the south of t… [+2935 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "New York Post"
+      },
+      "author": "Associated Press",
+      "title": "Construction for new Titans stadium stopped after noose found at site - New York Post",
+      "description": "Construction on a new enclosed stadium for the Tennessee Titans in Nashville, Tennessee, has been halted after a noose was found at the construction site.",
+      "url": "https://nypost.com/2025/07/18/sports/construction-for-new-titans-stadium-stopped-after-noose-found-at-site/",
+      "urlToImage": "https://nypost.com/wp-content/uploads/sites/2/2025/07/newspress-collage-5l78dzko7-1752886264361.jpg?quality=75&strip=all&1752871871&w=1024",
+      "publishedAt": "2025-07-19T01:36:00Z",
+      "content": "Construction on a new enclosed stadium for the Tennessee Titans in Nashville, Tennessee, has been halted after a noose was found at the construction site.\r\nMetro Nashville Police spokesperson Kristin… [+1608 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Minneapolis Star Tribune"
+      },
+      "author": "Kim Hyatt, Kim Hyatt",
+      "title": "Sen. Nicole Mitchell convicted on both counts in burglary trial - Star Tribune",
+      "description": "The felony case could threaten the DFL senator’s career and the political balance of the Minnesota Senate, which her party controls by a single vote.",
+      "url": "https://www.startribune.com/sen-nicole-mitchell-burglary-trial-goes-to-jury/601434374",
+      "urlToImage": "https://arc.stimg.co/startribunemedia/J2AYWS6UZNCATEXDZWRS7IFB44.JPG?&w=1200&ar=1.91:1&fit=crop",
+      "publishedAt": "2025-07-19T01:07:30Z",
+      "content": "DETROIT LAKES, MINN. - Following three days of emotional testimony, jurors found state Sen. Nicole Mitchell guilty Friday of first-degree burglary and felony possession of burglary tools in connectio… [+1663 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "NBCSports.com"
+      },
+      "author": "Mike Florio",
+      "title": "Did the NFLPA know about Lloyd Howell’s Booz Allen strip-club misadventures? - NBC Sports",
+      "description": "It's becoming harder and harder to keep up with the various twists and turns in the disintegration of Lloyd Howell's two-year run as the NFL Players Association's executive director.",
+      "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/did-the-nflpa-know-about-lloyd-howells-booz-allen-strip-club-misadventures",
+      "urlToImage": "https://nbcsports.brightspotcdn.com/dims4/default/348b732/2147483647/strip/true/crop/5000x2813+0+260/resize/1440x810!/quality/90/?url=https%3A%2F%2Fnbc-sports-production-nbc-sports.s3.us-east-1.amazonaws.com%2Fbrightspot%2Fdc%2Fdb%2Fd77d48174054b65cb1ca67471685%2Fhttps-delivery-gettyimages.com%2Fdownloads%2F2216034816",
+      "publishedAt": "2025-07-19T00:23:58Z",
+      "content": "Its becoming harder and harder to keep up with the various twists and turns in the disintegration of Lloyd Howells two-year run as the NFL Players Associations executive director.\r\nHeres something th… [+2211 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "The Seattle Times"
+      },
+      "author": "Lauren Girgis",
+      "title": "KUOW listeners give nearly $1.5 million in one day - The Seattle Times",
+      "description": "The station raised nearly $1.5 million by 1 p.m. on Friday afternoon in response to Congress slashing Corporation for Public Broadcasting funding.",
+      "url": "https://www.seattletimes.com/entertainment/kuow-raises-1-4m-after-congress-slashes-public-broadcasting-funds/",
+      "urlToImage": "https://images.seattletimes.com/wp-content/uploads/2025/07/07182025_tzr_tzr_161051.jpg?d=1200x630",
+      "publishedAt": "2025-07-18T23:59:19Z",
+      "content": "Seattle’s NPR station raised nearly $1.5 million in less than 12 hours through an emergency fundraising campaign Friday after Congress approved clawing back $9 billion in already approved government … [+3719 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "DW (English)"
+      },
+      "author": "Anchal Vohra",
+      "title": "New EU sanctions on Russia 'unprecedented' - DW",
+      "description": "The EU will impose a moving price cap on Russian oil, among other measures, in a bid to shrink Russia's economy. The bloc hopes the latest sanctions package will urge Russia toward a ceasefire with Ukraine.",
+      "url": "https://www.dw.com/en/new-eu-sanctions-on-russia-unprecedented/a-73330761",
+      "urlToImage": "https://static.dw.com/image/61680485_6.jpg",
+      "publishedAt": "2025-07-18T22:04:38Z",
+      "content": "The European Union has adopted a new set of sanctions against Russia in the hopes of restricting its ability to wage war in Ukraine. \r\nThe EU Commission President Ursula von der Leyen said the bloc w… [+5413 chars]"
+    },
+    {
+      "source": {
+        "id": "wired",
+        "name": "Wired"
+      },
+      "author": "Boone Ashworth",
+      "title": "Apple Sues the YouTuber Who Leaked iOS 26 - WIRED",
+      "description": "In a lawsuit filed against prominent leaker Jon Prosser, Apple alleges a conspiracy to break into a development device and steal its trade secrets. Prosser insists Apple has it all wrong.",
+      "url": "https://www.wired.com/story/apple-sues-the-youtuber-who-leaked-ios-26/",
+      "urlToImage": "https://media.wired.com/photos/687a7bee93808b4bb00b60b6/191:100/w_1280,c_limit/Apple-WWDC25-iOS-26-hero-250609.jpg",
+      "publishedAt": "2025-07-18T21:58:05Z",
+      "content": "Leaks are a constant part of big product news cycles, particularly for companies like Apple. Online soothsayers like Jon Prosser and Bloombergs Mark Gurman have long predicted the content of upcoming… [+4086 chars]"
+    }
+  ]
+
+  
+
+const NewsData = () => {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.log("Hello I am from useEffect in News component");
+    // Yahan API call ya logic bhi kar sakte ho future mein
+  }, []);
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="text-2xl font-bold text-center mb-6">
+        NewsHub - Top Headlines
+      </h2>
+        
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {article.map((element) => (
+          <div key={element.url}>
+            <NewsItem
+              title={element.title}
+              description={element.description || "The alliance has been beneficial to both men but has often been fractious"}
+              imageUrl={element.urlToImage ||"https://media.wired.com/photos/687a7bee93808b4bb00b60b6/191:100/w_1280,c_limit/Apple-WWDC25-iOS-26-hero-250609.jpg" }
+              newsUrl={element.url}
+            />
+          </div>
+        ))} 
+      </div>
+    </div>
+  );
+};
+
+export default NewsData;
+
+ 
